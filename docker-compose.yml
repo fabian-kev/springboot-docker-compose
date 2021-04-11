@@ -1,0 +1,50 @@
+version: '3.3'
+services:
+  human-server:
+    container_name: human-server
+    image: human-server-image
+    build:
+      context: .
+      dockerfile: Dockerfile
+#    restart: always
+#    environment: # Pass environment variables to the service
+#      SPRING_PROFILES_ACTIVE: dev
+#      SPRING_DATASOURCE_URL: jdbc:mysql://virtual-world-mysql:3306/virtual_world?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: admin
+    ports:
+      - 8080:8080
+    networks:
+      - playground
+    depends_on:
+      - virtual-world-mysql
+
+  virtual-world-mysql:
+    container_name: virtual-world-mysql
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+#    restart: always
+    environment:
+      MYSQL_DATABASE: virtual_world
+#      MYSQL_USER: root
+#      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: admin
+    volumes:
+      - type: volume
+        source: db-data
+        target: /var/lib/mysql
+    networks:
+      - playground
+
+
+#
+volumes:
+  db-data:
+
+networks:
+  playground:
+    driver: bridge
+
+
+
